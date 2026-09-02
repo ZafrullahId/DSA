@@ -6,15 +6,20 @@ internal class Program
 {
     private static void Main(string[] args)
     {
+        // Test Case 1: Example from the problem description featuring duplicate books, frees, and a capacity block
+        Console.WriteLine(NumberOfBookedRooms(new Dictionary<char, int> { { 'S', 2 }, { 'D', 1 }, { 'P', 1 } }, ["+4CS", "+0AD", "+4CS", "+1BS", "+2CP", "+3DS", "-4CS", "+3DS", "-0AD", "-0AD"])); // Expected Output: 3
 
-        // Console.WriteLine(MaxArea([1, 2, 1]));
+        // Test Case 2: Empty reservations list with predefined room type capacities
+        Console.WriteLine(NumberOfBookedRooms(new Dictionary<char, int> { { 'S', 7 }, { 'D', 3 }, { 'P', 1 } }, [])); // Expected Output: 0
 
-        // foreach (var x in MaxSlidingWindow([1], 1))
-        // {
-        //     Console.WriteLine(x);
-        // }
+        // Test Case 3: Only attempting to free rooms that are already free (should be ignored)
+        Console.WriteLine(NumberOfBookedRooms(new Dictionary<char, int> { { 'S', 5 }, { 'D', 3 }, { 'P', 2 } }, ["-0AS", "-1BD", "-5CS"])); // Expected Output: 0
 
-        Console.WriteLine(GroupAnagrams(["eat", "tea", "tan", "ate", "nat", "bat"]));
+        // Test Case 4: Booking attempts exceeding the maximum allowed capacity for a specific type
+        Console.WriteLine(NumberOfBookedRooms(new Dictionary<char, int> { { 'S', 1 } }, ["+1AS", "+2AS", "+3AS"])); // Expected Output: 1
+
+        // Test Case 5: Successfully booking, freeing, and reusing room capacity up to the type limit
+        Console.WriteLine(NumberOfBookedRooms(new Dictionary<char, int> { { 'D', 2 } }, ["+0AD", "+1AD", "-0AD", "+2AD"])); // Expected Output: 2
 
     }
     public static int MaxDistance(int[] nums1, int[] nums2)
@@ -810,7 +815,58 @@ internal class Program
             }
         }
         return result;
-        
+    }
+    public static int NumberOfBookedRooms(string[] bookings)
+    {
+        var bookedRooms = new HashSet<string>();
+
+        for (int i = 0; i < bookings.Length; i++)
+        {
+            string room = bookings[i][1..];
+
+            if (bookings[i].StartsWith('+'))
+            {
+                bookedRooms.Add(room);
+            }
+            else if (bookings[i].StartsWith('-'))
+            {
+                bookedRooms.Remove(room);
+            }
+        }
+        return bookedRooms.Count;
+    }
+    public static int NumberOfBookedRooms(Dictionary<char, int> rooomTypeCapacity, string[] bookings)
+    {
+        var bookedRooms = new HashSet<string>();
+
+        for (int i = 0; i < bookings.Length; i++)
+        {
+            var room = bookings[i][1..];
+
+            var roomType = room[^1];
+
+            if (rooomTypeCapacity.TryGetValue(roomType, out int capacity))
+            {
+                if (capacity <= 0)
+                {
+                    continue;
+                }
+            }
+
+            if (bookings[i].StartsWith('+'))
+            {
+                bookedRooms.Add(room);
+
+                rooomTypeCapacity[roomType] = capacity - 1;
+            }
+            else if (bookings[i].StartsWith('-'))
+            {
+                bookedRooms.Remove(room);
+
+                rooomTypeCapacity[roomType] = capacity + 1;
+            }
+        }
+        return bookedRooms.Count;
     }
 }
 
