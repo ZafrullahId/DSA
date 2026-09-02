@@ -6,20 +6,7 @@ internal class Program
 {
     private static void Main(string[] args)
     {
-        // Test Case 1: Example from the problem description featuring duplicate books, frees, and a capacity block
-        Console.WriteLine(NumberOfBookedRooms(new Dictionary<char, int> { { 'S', 2 }, { 'D', 1 }, { 'P', 1 } }, ["+4CS", "+0AD", "+4CS", "+1BS", "+2CP", "+3DS", "-4CS", "+3DS", "-0AD", "-0AD"])); // Expected Output: 3
-
-        // Test Case 2: Empty reservations list with predefined room type capacities
-        Console.WriteLine(NumberOfBookedRooms(new Dictionary<char, int> { { 'S', 7 }, { 'D', 3 }, { 'P', 1 } }, [])); // Expected Output: 0
-
-        // Test Case 3: Only attempting to free rooms that are already free (should be ignored)
-        Console.WriteLine(NumberOfBookedRooms(new Dictionary<char, int> { { 'S', 5 }, { 'D', 3 }, { 'P', 2 } }, ["-0AS", "-1BD", "-5CS"])); // Expected Output: 0
-
-        // Test Case 4: Booking attempts exceeding the maximum allowed capacity for a specific type
-        Console.WriteLine(NumberOfBookedRooms(new Dictionary<char, int> { { 'S', 1 } }, ["+1AS", "+2AS", "+3AS"])); // Expected Output: 1
-
-        // Test Case 5: Successfully booking, freeing, and reusing room capacity up to the type limit
-        Console.WriteLine(NumberOfBookedRooms(new Dictionary<char, int> { { 'D', 2 } }, ["+0AD", "+1AD", "-0AD", "+2AD"])); // Expected Output: 2
+       
 
     }
     public static int MaxDistance(int[] nums1, int[] nums2)
