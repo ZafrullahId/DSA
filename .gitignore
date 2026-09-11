@@ -10,6 +10,7 @@
 
 # Visual Studio files
 .vs/
+.vscode/
 *.user
 *.suo
 *.userosscache

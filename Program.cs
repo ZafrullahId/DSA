@@ -4,10 +4,25 @@ using System.Text;
 
 internal class Program
 {
+    private static readonly Dictionary<string, decimal> Bills = new()
+  {
+        { "PENNY", 0.01m },
+        { "NICKEL", 0.05m },
+        { "DIME", 0.10m },
+        { "QUARTER", 0.25m },
+        { "HALF DOLLAR", 0.50m },
+        { "ONE", 1.00m },
+        { "TWO", 2.00m },
+        { "FIVE", 5.00m },
+        { "TEN", 10.00m },
+        { "TWENTY", 20.00m },
+        { "FIFTY", 50.00m },
+        { "ONE HUNDRED", 100.00m }
+
+  };
     private static void Main(string[] args)
     {
-       
-
+        Console.WriteLine(TotalNumbers([0,2,2]));
     }
     public static int MaxDistance(int[] nums1, int[] nums2)
     {
@@ -854,6 +869,84 @@ internal class Program
             }
         }
         return bookedRooms.Count;
+    }
+    public static void Change(string input)
+    {
+        if (string.IsNullOrEmpty(input))
+        {
+            return;
+        }
+
+        string[] parts = input.Split(';');
+        if (parts.Length != 2)
+        {
+            return;
+        }
+
+        if (decimal.TryParse(parts[0], out decimal pp) || decimal.TryParse(parts[1], out decimal ch))
+        {
+            return;
+        }
+
+        if (ch < pp)
+        {
+            Console.WriteLine("ERROR");
+        }
+        else if (ch == pp)
+        {
+            Console.WriteLine("ZERO");
+        }
+        else
+        {
+            decimal change = ch - pp;
+
+            List<string> result = new();
+
+            var bills = Bills.OrderByDescending(x => x.Value);
+
+            foreach (var bill in bills)
+            {
+                while (change >= bill.Value)
+                {
+                    result.Add(bill.Key);
+                    change -= bill.Value;
+                }
+            }
+            result.Sort(StringComparer.Ordinal);
+            Console.WriteLine(string.Join(",", result));
+        }
+    }
+    public static int TotalNumbers(int[] digits)
+    {
+       var uniqueItems = new HashSet<string>();
+
+        for (int i = 0; i < digits.Length; i++)
+        {
+            if (digits[i] == 0)
+            {
+                continue;
+            }
+            for (int j = 0; j < digits.Length; j++)
+            {
+                if (j == i)
+                {
+                    continue;
+                }
+                for (int k = 0; k < digits.Length; k++)
+                {
+                    if (k == i || k == j)
+                    {
+                        continue;
+                    }
+                    if (digits[k] % 2 != 0)
+                    {
+                        continue;
+                    }
+                    uniqueItems.Add(string.Concat(digits[i],digits[j],digits[k]));
+                }
+            }
+        }
+        return uniqueItems.Count;
     }
 }
 
