@@ -1,28 +1,30 @@
 ﻿using System.Numerics;
+using System.Reflection.Metadata.Ecma335;
 using System.Runtime.CompilerServices;
 using System.Text;
 
 internal class Program
 {
     private static readonly Dictionary<string, decimal> Bills = new()
-  {
-        { "PENNY", 0.01m },
-        { "NICKEL", 0.05m },
-        { "DIME", 0.10m },
-        { "QUARTER", 0.25m },
-        { "HALF DOLLAR", 0.50m },
-        { "ONE", 1.00m },
-        { "TWO", 2.00m },
-        { "FIVE", 5.00m },
-        { "TEN", 10.00m },
-        { "TWENTY", 20.00m },
-        { "FIFTY", 50.00m },
-        { "ONE HUNDRED", 100.00m }
+    {
+            { "PENNY", 0.01m },
+            { "NICKEL", 0.05m },
+            { "DIME", 0.10m },
+            { "QUARTER", 0.25m },
+            { "HALF DOLLAR", 0.50m },
+            { "ONE", 1.00m },
+            { "TWO", 2.00m },
+            { "FIVE", 5.00m },
+            { "TEN", 10.00m },
+            { "TWENTY", 20.00m },
+            { "FIFTY", 50.00m },
+            { "ONE HUNDRED", 100.00m }
 
-  };
+    };
     private static void Main(string[] args)
     {
-        Console.WriteLine(TotalNumbers([0,2,2]));
+        // Console.WriteLine(KthSmallest([[1, 5, 9], [10, 11, 13], [12, 13, 15]], 8));
+        Console.WriteLine(SearchMatrix([[1,3,5,7],[10,11,16,20],[23,30,34,60]], 3));
     }
     public static int MaxDistance(int[] nums1, int[] nums2)
     {
@@ -918,7 +920,7 @@ internal class Program
     }
     public static int TotalNumbers(int[] digits)
     {
-       var uniqueItems = new HashSet<string>();
+        var uniqueItems = new HashSet<string>();
 
         for (int i = 0; i < digits.Length; i++)
         {
@@ -942,12 +944,112 @@ internal class Program
                     {
                         continue;
                     }
-                    uniqueItems.Add(string.Concat(digits[i],digits[j],digits[k]));
+                    uniqueItems.Add(string.Concat(digits[i], digits[j], digits[k]));
                 }
             }
         }
         return uniqueItems.Count;
     }
+
+    public static int MinSumOfLengths(int[] arr, int target)
+    {
+        int minRight = MinSumOfLengthsRight(arr, target);
+        Array.Reverse(arr);
+        int minLeft = MinSumOfLengthsRight(arr, target);
+
+        if (minRight == -1)
+        {
+            return minLeft;
+        }
+        else if (minLeft == -1)
+        {
+            return minRight;
+        }
+
+        return Math.Min(minRight, minLeft);
+    }
+    public static int MinSumOfLengthsRight(int[] arr, int target)
+    {
+        List<int> targetSumCount = [];
+        int currentSubArrayCount = 0;
+        int currentSubArraySum = 0;
+        int currentSubArrayStartingIndex = 0;
+
+        for (int i = 0; i < arr.Length; i++)
+        {
+            if (arr[i] == target)
+            {
+                targetSumCount.Add(1);
+                currentSubArraySum = 0;
+                currentSubArrayCount = 0;
+                currentSubArrayStartingIndex = i + 1;
+                continue;
+            }
+            currentSubArrayCount++;
+            currentSubArraySum += arr[i];
+            if (currentSubArraySum > target)
+            {
+                currentSubArraySum -= arr[currentSubArrayStartingIndex];
+                currentSubArrayCount -= 1;
+                currentSubArrayStartingIndex += 1;
+                if (currentSubArraySum == target)
+                {
+                    targetSumCount.Add(currentSubArrayCount);
+                    currentSubArraySum = 0;
+                    currentSubArrayCount = 0;
+                    currentSubArrayStartingIndex = i + 1;
+                }
+                continue;
+            }
+            if (currentSubArraySum == target)
+            {
+                targetSumCount.Add(currentSubArrayCount);
+                currentSubArraySum = 0;
+                currentSubArrayCount = 0;
+                currentSubArrayStartingIndex = i + 1;
+            }
+        }
+
+        if (targetSumCount.Count < 2)
+        {
+            return -1;
+        }
+        targetSumCount.Sort();
+
+        return targetSumCount.Take(2).Sum();
+    }
+
+    public static int KthSmallest(int[][] matrix, int k)
+    {
+
+        List<int> arr = [];
+        for (int i = 0; i < matrix.Length; i++)
+        {
+            for (int j = 0; j < matrix[i].Length; j++)
+            {
+                arr.Add(matrix[i][j]);
+            }
+        }
+        arr.Sort();
+        return arr[k - 1];
+
+    }
+
+    public static bool SearchMatrix(int[][] matrix, int target)
+    {
+        int targetRow = 0;
+        for (int i = 0; i < matrix.Length; i++)
+        {
+            if (matrix[i][^1] > target)
+            {
+                targetRow = i;
+                break;
+            }
+        }
+        int val = matrix[targetRow].IndexOf(target);
+        return val != -1;
+    }
+
 }
 
 public class ListNode
