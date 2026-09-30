@@ -24,7 +24,10 @@ internal class Program
     private static void Main(string[] args)
     {
         // Console.WriteLine(KthSmallest([[1, 5, 9], [10, 11, 13], [12, 13, 15]], 8));
-        Console.WriteLine(SearchMatrix([[1,3,5,7],[10,11,16,20],[23,30,34,60]], 3));
+        foreach (var item in MaxDepthAfterSplit("()(())()"))
+        {
+            Console.Write(item + " ");
+        }
     }
     public static int MaxDistance(int[] nums1, int[] nums2)
     {
@@ -1050,6 +1053,57 @@ internal class Program
         return val != -1;
     }
 
+    public static string ReverseParentheses(string s)
+    {
+        Stack<int> stack = [];
+        var arr = s.ToCharArray();
+
+        for (int i = 0; i < s.Length; i++)
+        {
+            if (s[i] == '(')
+            {
+                stack.Push(i);
+            }
+            else if (s[i] == ')')
+            {
+                int j = stack.Pop();
+                Array.Reverse(arr, j + 1, i - (j + 1));
+            }
+        }
+        StringBuilder result = new();
+
+        foreach (var item in arr)
+        {
+            if (item != '(' && item != ')')
+            {
+                result.Append(item);
+            }
+        }
+
+        return result.ToString();
+    }
+    public static int[] MaxDepthAfterSplit(string seq)
+    {
+        Stack<int> stack = [];
+        int [] result = new int [seq.Length];
+        int binary = 0;
+        for (int i = 0; i < seq.Length; i++)
+        {
+            if (seq[i] == '(')
+            {
+                stack.Push(binary);
+                result[i] = binary;
+                binary = binary == 0 ? 1 : 0;
+            }
+            else if (seq[i] == ')')
+            {
+                int nextBin = stack.Pop();
+                result[i] = nextBin;
+                binary = nextBin;
+            }
+        }
+        return result;
+    }
 }
 
 public class ListNode
