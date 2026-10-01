@@ -23,11 +23,7 @@ internal class Program
     };
     private static void Main(string[] args)
     {
-        // Console.WriteLine(KthSmallest([[1, 5, 9], [10, 11, 13], [12, 13, 15]], 8));
-        foreach (var item in MaxDepthAfterSplit("()(())()"))
-        {
-            Console.Write(item + " ");
-        }
+        Console.WriteLine(IsValid("([)]"));
     }
     public static int MaxDistance(int[] nums1, int[] nums2)
     {
@@ -1085,7 +1081,7 @@ internal class Program
     public static int[] MaxDepthAfterSplit(string seq)
     {
         Stack<int> stack = [];
-        int [] result = new int [seq.Length];
+        int[] result = new int[seq.Length];
         int binary = 0;
         for (int i = 0; i < seq.Length; i++)
         {
@@ -1103,6 +1099,37 @@ internal class Program
             }
         }
         return result;
+    }
+
+    public static bool IsValid(string s)
+    {
+        Stack<char> stack = [];
+
+        for (int i = 0; i < s.Length; i++)
+        {
+            if (s[i] == '(' || s[i] == '[' || s[i] == '{')
+            {
+                stack.Push(s[i]);
+            }
+            else
+            {
+                if (stack.Count < 1)
+                {
+                    return false;
+                }
+                char nextToClose = stack.Pop();
+
+                if (nextToClose == '(' && s[i] != ')' || nextToClose == '[' && s[i] != ']' || nextToClose == '{' && s[i] != '}')
+                {
+                    return false;
+                }
+            }
+        }
+        if (stack.Count > 0)
+        {
+            return false;
+        }
+        return true;
     }
 }
 
