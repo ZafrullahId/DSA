@@ -23,7 +23,7 @@ internal class Program
     };
     private static void Main(string[] args)
     {
-        Console.WriteLine(IsValid("([)]"));
+        Console.WriteLine(LongestValidParentheses("()()"));
     }
     public static int MaxDistance(int[] nums1, int[] nums2)
     {
@@ -1130,6 +1130,33 @@ internal class Program
             return false;
         }
         return true;
+    }
+    public static int LongestValidParentheses(string s)
+    {
+        Stack<int> stack = [];
+        int longestValid = 0;
+        stack.Push(-1);
+
+        for (int i = 0; i < s.Length; i++)
+        {
+            if (s[i] == '(')
+            {
+                stack.Push(i);
+            }
+            else
+            {
+                _ = stack.Pop();
+                if (stack.Count < 1)
+                {
+                    stack.Push(i);
+                    continue;
+                }
+
+                int currentValid = i - stack.Peek();
+                longestValid = currentValid > longestValid ? currentValid : longestValid;
+            }
+        }
+        return longestValid;
     }
 }
 
