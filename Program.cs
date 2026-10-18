@@ -23,7 +23,7 @@ internal class Program
     };
     private static void Main(string[] args)
     {
-        Console.WriteLine(ScoreOfParentheses("()()()"));
+        Console.WriteLine(LongestSubarray([1,1,1]));
     }
     public static int MaxDistance(int[] nums1, int[] nums2)
     {
@@ -575,36 +575,21 @@ internal class Program
     }
     public static int MaxProduct(int[] nums)
     {
-        int maximumSubArrayProduct = nums[0];
-        int currentSubArrayProd = 1;
-        int negativeProd = 1;
-        int maxNegativeProd = 1;
+        int maxProd = nums[0];
+        int currentMax = nums[0];
+        int currentMin = nums[0];
 
-        for (int i = 0; i < nums.Length; i++)
+        for (int i = 1; i < nums.Length; i++)
         {
-            negativeProd *= nums[i];
-            if (nums[i] < 0)
-            {
-                if (negativeProd <= 0)
-                {
-                    currentSubArrayProd = 1;
-                }
-                else
-                {
-                    currentSubArrayProd = negativeProd;
-                    maximumSubArrayProduct = currentSubArrayProd > maximumSubArrayProduct ? currentSubArrayProd : maximumSubArrayProduct;
-                }
-                continue;
-            }
-            if (currentSubArrayProd == 0)
-            {
-                currentSubArrayProd = 1;
-                negativeProd = 1;
-            }
-            currentSubArrayProd *= nums[i];
-            maximumSubArrayProduct = currentSubArrayProd > maximumSubArrayProduct ? currentSubArrayProd : maximumSubArrayProduct;
+            int a = nums[i] * currentMax;
+            int b = nums[i] * currentMin;
+
+            currentMax = Math.Max(Math.Max(a, b), nums[i]);
+            currentMin = Math.Min(Math.Min(a, b), nums[i]);
+
+            maxProd = Math.Max(currentMax, maxProd);
         }
-        return maximumSubArrayProduct;
+        return maxProd;
     }
     public static int MaxArea(int[] height)
     {
@@ -665,31 +650,31 @@ internal class Program
         return !letterOccurence.Any(x => x.Value != 0);
     }
 
-    public static bool IsPalindrome(string s)
-    {
-        int leftPointer = 0;
-        int rightPointer = s.Length - 1;
-        while (leftPointer <= rightPointer)
-        {
-            if (!char.IsLetterOrDigit(s[leftPointer]))
-            {
-                leftPointer++;
-                continue;
-            }
-            if (!char.IsLetterOrDigit(s[rightPointer]))
-            {
-                rightPointer--;
-                continue;
-            }
-            if (!s[leftPointer].ToString().Equals(s[rightPointer].ToString(), StringComparison.CurrentCultureIgnoreCase))
-            {
-                return false;
-            }
-            leftPointer++;
-            rightPointer--;
-        }
-        return true;
-    }
+    // public static bool IsPalindrome(string s)
+    // {
+    //     int leftPointer = 0;
+    //     int rightPointer = s.Length - 1;
+    //     while (leftPointer <= rightPointer)
+    //     {
+    //         if (!char.IsLetterOrDigit(s[leftPointer]))
+    //         {
+    //             leftPointer++;
+    //             continue;
+    //         }
+    //         if (!char.IsLetterOrDigit(s[rightPointer]))
+    //         {
+    //             rightPointer--;
+    //             continue;
+    //         }
+    //         if (!s[leftPointer].ToString().Equals(s[rightPointer].ToString(), StringComparison.CurrentCultureIgnoreCase))
+    //         {
+    //             return false;
+    //         }
+    //         leftPointer++;
+    //         rightPointer--;
+    //     }
+    //     return true;
+    // }
     public static int LengthOfLongestSubstring(string s)
     {
         int maxSubstringLength = 0;
@@ -952,71 +937,43 @@ internal class Program
 
     public static int MinSumOfLengths(int[] arr, int target)
     {
-        int minRight = MinSumOfLengthsRight(arr, target);
-        Array.Reverse(arr);
-        int minLeft = MinSumOfLengthsRight(arr, target);
-
-        if (minRight == -1)
-        {
-            return minLeft;
-        }
-        else if (minLeft == -1)
-        {
-            return minRight;
-        }
-
-        return Math.Min(minRight, minLeft);
-    }
-    public static int MinSumOfLengthsRight(int[] arr, int target)
-    {
-        List<int> targetSumCount = [];
-        int currentSubArrayCount = 0;
-        int currentSubArraySum = 0;
-        int currentSubArrayStartingIndex = 0;
-
+        // [1,1,1,2,2,2,4,4]
+        List<int> minSumLength = [];
+        int currentLap = 0;
         for (int i = 0; i < arr.Length; i++)
         {
-            if (arr[i] == target)
+            if (currentLap < minSumLength.Count && i + 1 > minSumLength[currentLap])
             {
-                targetSumCount.Add(1);
-                currentSubArraySum = 0;
-                currentSubArrayCount = 0;
-                currentSubArrayStartingIndex = i + 1;
-                continue;
+                currentLap++;
             }
-            currentSubArrayCount++;
-            currentSubArraySum += arr[i];
-            if (currentSubArraySum > target)
+            var currentSubArr = new List<int>();
+            for (int j = i; j < arr.Length; j++)
             {
-                currentSubArraySum -= arr[currentSubArrayStartingIndex];
-                currentSubArrayCount -= 1;
-                currentSubArrayStartingIndex += 1;
-                if (currentSubArraySum == target)
+                currentSubArr.Add(arr[j]);
+                if (currentSubArr.Sum() > target)
                 {
-                    targetSumCount.Add(currentSubArrayCount);
-                    currentSubArraySum = 0;
-                    currentSubArrayCount = 0;
-                    currentSubArrayStartingIndex = i + 1;
+                    break;
                 }
-                continue;
-            }
-            if (currentSubArraySum == target)
-            {
-                targetSumCount.Add(currentSubArrayCount);
-                currentSubArraySum = 0;
-                currentSubArrayCount = 0;
-                currentSubArrayStartingIndex = i + 1;
+                else if (currentSubArr.Sum() == target)
+                {
+                    if (currentLap < minSumLength.Count && i + 1 <= minSumLength[currentLap] && currentSubArr.Count <= minSumLength[currentLap])
+                    {
+                        minSumLength[currentLap] = currentSubArr.Count;
+                    }
+                    else
+                        minSumLength.Add(currentSubArr.Count);
+                    break;
+                }
             }
         }
-
-        if (targetSumCount.Count < 2)
+        if (minSumLength.Count < 2)
         {
             return -1;
         }
-        targetSumCount.Sort();
-
-        return targetSumCount.Take(2).Sum();
+        minSumLength.Sort();
+        return minSumLength.Take(2).Sum();
     }
+
 
     public static int KthSmallest(int[][] matrix, int k)
     {
@@ -1189,8 +1146,132 @@ internal class Program
         {
             score += (int)Math.Pow(2, currentInnerCount - 1);
         }
-            score *= 2;
+        score *= 2;
         return score;
+    }
+    public static int SumCounts(IList<int> nums)
+    {
+        var result = 0;
+
+        for (int i = 0; i < nums.Count; i++)
+        {
+            HashSet<int> dist = [];
+            for (int j = i; j < nums.Count; j++)
+            {
+                dist.Add(nums[j]);
+                result += dist.Count * dist.Count;
+            }
+        }
+        return result;
+    }
+    public int SumCounts(int[] nums)
+    {
+        long MOD = 1_000_000_007;
+        long result = 0;
+        for (int i = 0; i < nums.Length; i++)
+        {
+            var distSubArr = new HashSet<int>();
+            for (int j = i; j < nums.Length; j++)
+            {
+                distSubArr.Add(nums[j]);
+                result += distSubArr.Count * distSubArr.Count % MOD;
+            }
+        }
+        return (int)(result % MOD);
+    }
+
+    public static string MaxSumOfSquares(int num, int sum)
+    {
+        if (9 * num < sum)
+        {
+            return "";
+        }
+        StringBuilder builder = new();
+        int numberOfDigits = sum / 9;
+        int lastDigit = sum % 9;
+        builder.Append('9', numberOfDigits);
+        if (lastDigit > 0)
+        {
+            builder.Append((char)('0' + lastDigit));
+        }
+        builder.Append('0', num - builder.Length);
+
+        return builder.ToString();
+
+    }
+    public static long MaxAlternatingSum(int[] nums)
+    {
+        nums = Array.ConvertAll(nums, Math.Abs);
+        Array.Sort(nums);
+        int negCount = nums.Length / 2;
+        long result = 0;
+        for (int i = 0; i < nums.Length; i++)
+        {
+            if (i + 1 <= negCount)
+                result -= nums[i] * nums[i];
+            else
+                result += nums[i] * nums[i];
+        }
+        return result;
+    }
+    public static string LongestPalindrome(string s)
+    {
+
+        string longestPal = string.Empty;
+        for (int i = 0; i < s.Length; i++)
+        {
+            StringBuilder str = new();
+            for (int j = i; j < s.Length; j++)
+            {
+                str.Append(s[j]);
+                bool isPal = IsPalindrom(str.ToString());
+                if (isPal)
+                {
+                    longestPal = str.Length > longestPal.Length ? str.ToString() : longestPal;
+                }
+            }
+        }
+        return longestPal;
+    }
+    public static bool IsPalindrom(string str)
+    {
+        int rightPointer = 0;
+        int leftPointer = str.Length - 1;
+
+        while (rightPointer < leftPointer)
+        {
+            if (str[rightPointer] != str[leftPointer])
+            {
+                return false;
+            }
+            rightPointer++;
+            leftPointer--;
+        }
+        return true;
+    }
+    public static int LongestSubarray(int[] nums)
+    {
+        int longestCount = 0;
+        int lastSeenZeroIndex = -1;
+        int zeroCount = 0;
+        int leftPointer = 0;
+        for (int i = 0; i < nums.Length; i++)
+        {
+            if (nums[i] == 0)
+            {
+                zeroCount++;
+                if (zeroCount > 1)
+                {
+                    leftPointer = lastSeenZeroIndex + 1;
+                    zeroCount = 1;
+                }
+                lastSeenZeroIndex = i;
+            }
+
+            longestCount = Math.Max(longestCount, i - leftPointer);
+        }
+        return longestCount;
+
     }
 }
 
