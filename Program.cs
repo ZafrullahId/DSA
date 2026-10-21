@@ -23,7 +23,7 @@ internal class Program
     };
     private static void Main(string[] args)
     {
-        Console.WriteLine(LongestSubarray([1,1,1]));
+        Console.WriteLine(ReverseVowels("IceCreAm"));
     }
     public static int MaxDistance(int[] nums1, int[] nums2)
     {
@@ -974,7 +974,6 @@ internal class Program
         return minSumLength.Take(2).Sum();
     }
 
-
     public static int KthSmallest(int[][] matrix, int k)
     {
 
@@ -1272,6 +1271,145 @@ internal class Program
         }
         return longestCount;
 
+    }
+    public static string MergeAlternately(string word1, string word2)
+    {
+        int word1Pointer = 0;
+        int word2Pointer = 0;
+        StringBuilder result = new();
+        while (word1Pointer < word1.Length
+                && word2Pointer < word2.Length)
+        {
+            result.Append(word1[word1Pointer]);
+            result.Append(word2[word2Pointer]);
+            word1Pointer++;
+            word2Pointer++;
+        }
+
+        result.Append(word1[word1Pointer..word1.Length]);
+        result.Append(word2[word1Pointer..word2.Length]);
+        return result.ToString();
+    }
+
+    public static string GcdOfStrings(string str1, string str2)
+    {
+        if (str1 == str2)
+            return str1;
+
+        string longestDivsor;
+        if (str1.Length > str2.Length)
+            longestDivsor = Divide(str1, str2);
+        else
+            longestDivsor = Divide(str2, str1);
+
+        return longestDivsor;
+    }
+    public static string Divide(string str1, string str2)
+    {
+        string longestDivisor = string.Empty;
+        for (int i = 0; i < str2.Length; i++)
+        {
+            bool isBroken = false;
+            string divisor = str2[..(i + 1)];
+            for (int j = 0; j < str1.Length; j += 1 + i)
+            {
+                if (divisor.Length > str1.Length - j)
+                {
+                    isBroken = true;
+                    break;
+                }
+                if (str1.Substring(j, i + 1) != divisor)
+                {
+                    isBroken = true;
+                    break;
+                }
+            }
+            for (int j = 0; j < str2.Length; j += 1 + i)
+            {
+                if (divisor.Length > str2.Length - j)
+                {
+                    isBroken = true;
+                    break;
+                }
+                if (str2.Substring(j, i + 1) != divisor)
+                {
+                    isBroken = true;
+                    break;
+                }
+            }
+            if (!isBroken)
+                longestDivisor = divisor;
+        }
+        return longestDivisor;
+    }
+    public IList<bool> KidsWithCandies(int[] candies, int extraCandies)
+    {
+        int maxCandy = candies.Max();
+        List<bool> result = [];
+
+        for (int i = 0; i < candies.Length; i++)
+        {
+            if (candies[i] + extraCandies >= maxCandy)
+                result.Add(true);
+            else
+                result.Add(false);
+        }
+        return result;
+    }
+
+    public static bool CanPlaceFlowers(int[] flowerbed, int n)
+    {
+
+        int previous = flowerbed[0];
+
+        for (int i = 0; i < flowerbed.Length - 1; i++)
+        {
+            if (n == 0)
+            {
+                return true;
+            }
+
+            if (flowerbed[i] != 1 && previous == 0 && flowerbed[i + 1] == 0)
+            {
+                flowerbed[i] = 1;
+                n--;
+            }
+            previous = flowerbed[i];
+        }
+        return n == 0;
+    }
+    public static string ReverseVowels(string s)
+    {
+        var str = new StringBuilder(s);
+        HashSet<char> vowels = ['a', 'e', 'i', 'o', 'u', 'A', 'E', 'I', 'O', 'U'];
+        int i = 0;
+        int j =  s.Length - 1;
+
+        while(i < j)
+        {
+            if (vowels.Contains(str[i])
+            && vowels.Contains(str[j])
+            )
+            {
+                (str[j], str[i]) = (str[i], str[j]);
+                i++;
+                j--;
+            }
+            else if (vowels.Contains(str[i]))
+            {
+                j--;
+            }
+            else if (vowels.Contains(str[j]))
+            {
+                i++;
+            }
+            else
+            {
+                i++;
+                j--;
+            }
+        }
+        return str.ToString();
     }
 }
 
