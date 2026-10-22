@@ -23,7 +23,10 @@ internal class Program
     };
     private static void Main(string[] args)
     {
-        Console.WriteLine(ReverseVowels("IceCreAm"));
+        foreach (var item in ProductExceptSelf([-1,1,0,-3,3]))
+        {
+            Console.WriteLine(item);
+        }
     }
     public static int MaxDistance(int[] nums1, int[] nums2)
     {
@@ -532,25 +535,6 @@ internal class Program
 
         }
         return maxProfit;
-    }
-
-    public static int[] ProductExceptSelf(int[] nums)
-    {
-        int totalProd = 1;
-        var answer = new int[nums.Length];
-        for (int i = 0; i < nums.Length; i++)
-        {
-            if (nums[i] == 0)
-            {
-                continue;
-            }
-            totalProd *= nums[i];
-        }
-        for (int i = 0; i < answer.Length; i++)
-        {
-            answer[i] = nums[i] != 0 ? totalProd / nums[i] : 0;
-        }
-        return answer;
     }
     public static int MaxSubArray(int[] nums)
     {
@@ -1383,9 +1367,9 @@ internal class Program
         var str = new StringBuilder(s);
         HashSet<char> vowels = ['a', 'e', 'i', 'o', 'u', 'A', 'E', 'I', 'O', 'U'];
         int i = 0;
-        int j =  s.Length - 1;
+        int j = s.Length - 1;
 
-        while(i < j)
+        while (i < j)
         {
             if (vowels.Contains(str[i])
             && vowels.Contains(str[j])
@@ -1410,6 +1394,51 @@ internal class Program
             }
         }
         return str.ToString();
+    }
+    public static string ReverseWords(string s)
+    {
+        var arr = s.Split(" ", StringSplitOptions.RemoveEmptyEntries);
+        int i = 0;
+        int j = arr.Length - 1;
+        while (i < j)
+        {
+            (arr[j], arr[i]) = (arr[i], arr[j]);
+            i++;
+            j--;
+        }
+
+
+        return string.Join(" ", arr);
+    }
+    public static int[] ProductExceptSelf(int[] nums)
+    {
+        int prod = 1;
+        int zeroCount = 0;
+        for (int i = 0; i < nums.Length; i++)
+        {
+            if (nums[i] == 0)
+            {
+                zeroCount++;
+                continue;
+            }
+            prod *= nums[i];
+        }
+        for (int i = 0; i < nums.Length; i++)
+        {
+            if (nums[i] == 0 && zeroCount > 1)
+            {
+                nums[i] = 0;
+            }
+            else if (nums[i] == 0 && zeroCount <= 1)
+            {
+                nums[i] = prod;
+            }
+            else if (nums[i] != 0 && zeroCount >= 1)
+                nums[i] = 0;
+            else
+                nums[i] = prod/nums[i];
+        }
+        return nums;
     }
 }
 
